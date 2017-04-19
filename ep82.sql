@@ -1,18 +1,18 @@
 select 'Salvite sodales and Hello Youtube!';
 
 REPLACE INTO Episode(EpisodeID, EpisodeName, Description) 
-              VALUES('67',     
-                     'More power!',
-                     'We need more power!');
+              VALUES('83',     
+                     'The long road to bioplastic' ,
+                     'Oh boy this will take a while.');
 
 
 --select episodeid from episode;
 
 /*
 Electronic Circut Critical Path:
-  Automatic building of refining buildings
-  Quartz refining
-  Silicon plate production
+  x Automatic building of refining buildings
+  x Quartz refining
+  x Silicon plate production
   Plastic bar from wood production
   Circuit boards
   Electronic circuit boards
@@ -49,65 +49,26 @@ REPLACE INTO outputTarget(targetName,       targetAmount)
    VALUES         ('Yellow Belt 1 side',  20*1.0/3),
                   ('Red Belt 1 side',  20*1.0/3*2);
 
+REPLACE INTO craftingMachine (craftingName, electricConsumption, drain, craftingSpeed)
+   VALUES           ('Blast Furnace MK2', '135', '3.3', 1.25);
 
 
 REPLACE INTO recipe (item,              amount, craftingSpeed) 
-     VALUES      ('Electronic circuit board',    1,      5),
-                 ('Circuit board',    1,      5),
-                 ('Phenolic board', 2,      0.5),
-                 ('Ferric chloride solution',    5,      2.5),
-                 ('Hydrogen Chloride Gas',    10,      2),
-                 ('Chlorine Gas',   4,      2),
-                 ('Hydrogen Gas',   6,      2),
-                 ('Saline Water',   2,      1),
-                 ('Transistors',    5,      3.5),
-                 ('Plastic Bar',    1,      2),
-                 ('Silicon wafer',  8,      5),
-                 ('Propene Gas',    8,      2),
-                 ('Methanol Gas',   10,     30),
-                 ('Purified Water', 10,     1),
-                 ('Silicon plate',  2,      4),
-                 ('Molten Silicon', 3,      4),
-                 ('Silicon Ingot',  6,      4),
-                 ('Processed Silicon',  1,  2)
+     VALUES      ('Raw wood',    10,         60),
+                 ('Seedling',    1.5,         0.5),
+                 ('Cellulose Fiber',    4,    2)
+
                  ;
 
 REPLACE INTO recipeComponent (item,        constituentItem, constituentItemAmount)            
-   VALUES         ('Purified Water', 'Water',            15),
-                  ('Methanol Gas',   'Cellulose Fiber',  20),
-                  ('Propene Gas',    'Methanol Gas',     10),
-                  ('Propene Gas',    'Purified Water',   5),
-                  ('Silicon wafer',  'Silicon plate',    2),
-                  ('Silicon plate',  'Molten Silicon',   2),
-                  ('Molten Silicon', 'Silicon Ingot',    3),
-                  ('Silicon Ingot', 'Processed Silicon', 1),
-                  ('Silicon Ingot', 'Coal',              1),
-                  ('Processed Silicon', 'Quartz',        4),
-                  ('Plastic Bar', 'Propene Gas',         4),
-                  ('Transistors', 'Plastic Bar',         1),
-                  ('Transistors', 'Tinned copper wire',  1),
-                  ('Transistors', 'Silicon wafer',       2),
-                  ('Saline Water', 'Water',             15),
-                  ('Hydrogen Gas', 'Saline Water',      5), --because these two share outputs
-                  ('Chlorine Gas', 'Saline Water',      5),
-                  ('Hydrogen Chloride Gas', 'Hydrogen Gas', 5),
-                  ('Hydrogen Chloride Gas', 'Chlorine Gas', 5),
-                  ('Ferric chloride solution', 'Hydrogen Chloride Gas', 6),
-                  ('Ferric chloride solution', 'Iron ore', 1),
-                  ('Phenolic board', 'Wood',            1),
-                  ('Phenolic board', 'Resin',           1),
-                  ('Circuit board', 'Phenolic board',   1),
-                  ('Circuit board', 'Copper plate',     1),
-                  ('Circuit board', 'Tin plate',        1),
-                  ('Circuit board', 'Ferric chloride solution', 0.5),
-                  ('Electronic circuit board', 'Circuit board', 1),
-                  ('Electronic circuit board', 'Basic electronic components', 4),
-                  ('Electronic circuit board', 'Transistors', 4),
-                  ('Electronic circuit board', 'Solder', 1)
+   VALUES         ('Raw wood', 'Seedling',            10),
+                  ('Cellulose Fiber', 'Raw wood',      1),
+                  ('Seedling',   'Raw wood',           1)
+
                   ;
                   
 
-.width 100
+.width 120
 
 select primaryRecipe.item 
        || ' * ' || round(primaryRecipe.numCraftingMachines,1)
@@ -119,23 +80,85 @@ select primaryRecipe.item
        
        * secondaryRecipe.constituentTotalItemAmountPerSecond
        * tertiaryRecipe.numCraftingMachines,1) 
+
+       || ' <- ' || quadRecipe.item || ' * ' || round(primaryRecipe.constituentTotalItemAmountPerSecond
+       * secondaryRecipe.numCraftingMachines
+       
+       * secondaryRecipe.constituentTotalItemAmountPerSecond
+       * tertiaryRecipe.numCraftingMachines
+       * tertiaryRecipe.constituentTotalItemAmountPerSecond
+       * quadRecipe.numCraftingMachines,1) 
+       || ' <- ' || quinRecipe.item || ' * ' || round(primaryRecipe.constituentTotalItemAmountPerSecond
+       * secondaryRecipe.numCraftingMachines       
+       * secondaryRecipe.constituentTotalItemAmountPerSecond
+       * tertiaryRecipe.numCraftingMachines
+       * tertiaryRecipe.constituentTotalItemAmountPerSecond
+       * quadRecipe.numCraftingMachines
+       * quadRecipe.constituentTotalItemAmountPerSecond
+       * quinRecipe.numCraftingMachines
+       ,1) 
        
        as craftSequence
   from recipeTarget as primaryRecipe
   left outer join recipeTarget as secondaryRecipe on (primaryRecipe.constituentItem = secondaryRecipe.item)
   left outer join recipeTarget as tertiaryRecipe  on (secondaryRecipe.constituentItem = tertiaryRecipe.item)
-
-   where primaryRecipe.item = 'Iron Ore'
+  left outer join recipeTarget as quadRecipe  on (tertiaryRecipe.constituentItem = quadRecipe.item)
+  left outer join recipeTarget as quinRecipe  on (quadRecipe.constituentItem = quinRecipe.item)
+  left outer join recipeTarget as sexRecipe  on (quinRecipe.constituentItem = sexRecipe.item)
+   where primaryRecipe.item = 'Plastic Bar'
     and primaryRecipe.targetName = 'Red Belt 1 side'
-    and primaryRecipe.craftingName = 'Stone Furnace'
+    and primaryRecipe.craftingName = 'Blast Furnace MK2'
     and secondaryRecipe.targetName = '1 per Second'
-    and secondaryRecipe.craftingName = 'Steel furnace'
+    and secondaryRecipe.craftingName = 'Stone Furnace'
     and tertiaryRecipe.targetName = '1 per Second'
-    and tertiaryRecipe.craftingName = 'Assembling machine 2'
+    and tertiaryRecipe.craftingName = 'Blast Furnace MK2'
+    and quadRecipe.targetName = '1 per Second'
+    and quadRecipe.craftingName = 'Assembling machine 2'
+    and quinRecipe.targetName = '1 per Second'
+    and quinRecipe.craftingName = 'Assembling machine 2'
+    and sexRecipe.targetName = '1 per Second'
+    and sexRecipe.craftingName = 'Assembling machine 2'
+;
+
+select primaryRecipe.item 
+       || ' * ' || round(primaryRecipe.numCraftingMachines,1)
+       || ' <- ' || secondaryRecipe.item || ' * ' || round(primaryRecipe.constituentTotalItemAmountPerSecond
+       
+       * secondaryRecipe.numCraftingMachines,1)
+       || ' <- ' || tertiaryRecipe.item || ' * ' || round(primaryRecipe.constituentTotalItemAmountPerSecond
+       * secondaryRecipe.numCraftingMachines
+       
+       * secondaryRecipe.constituentTotalItemAmountPerSecond
+       * tertiaryRecipe.numCraftingMachines,1) 
+
+       
+       
+       as craftSequence
+  from recipeTarget as primaryRecipe
+  left outer join recipeTarget as secondaryRecipe on (primaryRecipe.constituentItem = secondaryRecipe.item)
+  left outer join recipeTarget as tertiaryRecipe  on (secondaryRecipe.constituentItem = tertiaryRecipe.item)
+  
+   where primaryRecipe.item = 'Raw wood'
+    and primaryRecipe.targetName = 'Red Belt 1 side'
+    and primaryRecipe.craftingName = 'Blast Furnace MK2'
+    and secondaryRecipe.targetName = '1 per Second'
+    and secondaryRecipe.craftingName = 'Stone Furnace'
+    and tertiaryRecipe.targetName = '1 per Second'
+    and tertiaryRecipe.craftingName = 'Blast Furnace MK2'
+   
 ;
 
 
+/*
+From uranium power
 
+Gross Power up to 265 MW
+Upkeep Power of 6.6 MW => Simple fuel enrichment, ~50 MW => SImple fuel enrichment + Fuel reprocessing
+Simple enrichment only concentrates U-235 to 1.7%, but that is sufficient for crafting MOX fuel. A complete enrichment of U-235 at 4.7% is recommended for at least the first two rounds of fueling the reactor.
+Net Power production is ~215-258 MW
+
+
+*/
 
 /*
 From robot army wiki:

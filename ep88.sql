@@ -1,19 +1,20 @@
+.header off
 select 'Salvite sodales and Hello Youtube!';
 
 REPLACE INTO Episode(EpisodeID, EpisodeName, Description) 
-              VALUES('67',     
-                     'More power!',
-                     'We need more power!');
+              VALUES('88',     
+                     'Tin Refining' ,
+                     'Maybe saying copper and tin was a little ambitious.');
 
 
 --select episodeid from episode;
 
 /*
 Electronic Circut Critical Path:
-  Automatic building of refining buildings
-  Quartz refining
-  Silicon plate production
-  Plastic bar from wood production
+  x Automatic building of refining buildings
+  x Quartz refining
+  x Silicon plate production
+  x Plastic bar from wood production
   Circuit boards
   Electronic circuit boards
 
@@ -44,98 +45,102 @@ SELECT listID, title, EpisodeID, tododescription
 
 */
 
-select * from craftingMachine;
+
+--select * from craftingMachine;
 REPLACE INTO outputTarget(targetName,       targetAmount) 
    VALUES         ('Yellow Belt 1 side',  20*1.0/3),
                   ('Red Belt 1 side',  20*1.0/3*2);
 
+REPLACE INTO craftingMachine (craftingName, electricConsumption, drain, craftingSpeed)
+   VALUES           ('Blast Furnace MK2', '135', '3.3', 1.25);
 
 
-REPLACE INTO recipe (item,              amount, craftingSpeed) 
-     VALUES      ('Electronic circuit board',    1,      5),
-                 ('Circuit board',    1,      5),
-                 ('Phenolic board', 2,      0.5),
-                 ('Ferric chloride solution',    5,      2.5),
-                 ('Hydrogen Chloride Gas',    10,      2),
-                 ('Chlorine Gas',   4,      2),
-                 ('Hydrogen Gas',   6,      2),
-                 ('Saline Water',   2,      1),
-                 ('Transistors',    5,      3.5),
-                 ('Plastic Bar',    1,      2),
-                 ('Silicon wafer',  8,      5),
-                 ('Propene Gas',    8,      2),
-                 ('Methanol Gas',   10,     30),
-                 ('Purified Water', 10,     1),
-                 ('Silicon plate',  2,      4),
-                 ('Molten Silicon', 3,      4),
-                 ('Silicon Ingot',  6,      4),
-                 ('Processed Silicon',  1,  2)
+REPLACE INTO recipe (item,           amount, craftingSpeed) 
+     VALUES      ('Copper plate',    2,    4),
+                 ('Molten Copper',   3,    4),
+                 ('Copper Ingot',    5,    4),
+                 ('Copper Pellet',   12,   2),
+                 ('Processed Copper',1,    2),
+                 ('Tin plate',       2,    4),
+                 ('Molten Tin',      3,    4),
+                 ('Tin Ingot',       6,    4),                 
+                 ('Processed Tin',   1,    2)                 
                  ;
 
 REPLACE INTO recipeComponent (item,        constituentItem, constituentItemAmount)            
-   VALUES         ('Purified Water', 'Water',            15),
-                  ('Methanol Gas',   'Cellulose Fiber',  20),
-                  ('Propene Gas',    'Methanol Gas',     10),
-                  ('Propene Gas',    'Purified Water',   5),
-                  ('Silicon wafer',  'Silicon plate',    2),
-                  ('Silicon plate',  'Molten Silicon',   2),
-                  ('Molten Silicon', 'Silicon Ingot',    3),
-                  ('Silicon Ingot', 'Processed Silicon', 1),
-                  ('Silicon Ingot', 'Coal',              1),
-                  ('Processed Silicon', 'Quartz',        4),
-                  ('Plastic Bar', 'Propene Gas',         4),
-                  ('Transistors', 'Plastic Bar',         1),
-                  ('Transistors', 'Tinned copper wire',  1),
-                  ('Transistors', 'Silicon wafer',       2),
-                  ('Saline Water', 'Water',             15),
-                  ('Hydrogen Gas', 'Saline Water',      5), --because these two share outputs
-                  ('Chlorine Gas', 'Saline Water',      5),
-                  ('Hydrogen Chloride Gas', 'Hydrogen Gas', 5),
-                  ('Hydrogen Chloride Gas', 'Chlorine Gas', 5),
-                  ('Ferric chloride solution', 'Hydrogen Chloride Gas', 6),
-                  ('Ferric chloride solution', 'Iron ore', 1),
-                  ('Phenolic board', 'Wood',            1),
-                  ('Phenolic board', 'Resin',           1),
-                  ('Circuit board', 'Phenolic board',   1),
-                  ('Circuit board', 'Copper plate',     1),
-                  ('Circuit board', 'Tin plate',        1),
-                  ('Circuit board', 'Ferric chloride solution', 0.5),
-                  ('Electronic circuit board', 'Circuit board', 1),
-                  ('Electronic circuit board', 'Basic electronic components', 4),
-                  ('Electronic circuit board', 'Transistors', 4),
-                  ('Electronic circuit board', 'Solder', 1)
+   VALUES         ('Copper plate',  'Molten Copper',    2),
+                  ('Molten Copper', 'Copper Ingot',     3),
+                  ('Copper Ingot',  'Copper Pellet',    5),
+                  ('Copper Pellet', 'Processed Copper', 2),
+                  ('Processed Copper', 'Copper ore',    4),
+                  ('Tin plate',     'Molten Tin',    2),
+                  ('Molten Tin',    'Tin Ingot',     3),
+                  ('Tin Ingot',     'Processed Tin', 1),
+                  ('Processed Tin', 'Tin ore',       4)
+
                   ;
                   
 
-.width 100
 
-select primaryRecipe.item 
-       || ' * ' || round(primaryRecipe.numCraftingMachines,1)
-       || ' <- ' || secondaryRecipe.item || ' * ' || round(primaryRecipe.constituentTotalItemAmountPerSecond
-       
-       * secondaryRecipe.numCraftingMachines,1)
-       || ' <- ' || tertiaryRecipe.item || ' * ' || round(primaryRecipe.constituentTotalItemAmountPerSecond
-       * secondaryRecipe.numCraftingMachines
-       
-       * secondaryRecipe.constituentTotalItemAmountPerSecond
-       * tertiaryRecipe.numCraftingMachines,1) 
-       
-       as craftSequence
-  from recipeTarget as primaryRecipe
-  left outer join recipeTarget as secondaryRecipe on (primaryRecipe.constituentItem = secondaryRecipe.item)
-  left outer join recipeTarget as tertiaryRecipe  on (secondaryRecipe.constituentItem = tertiaryRecipe.item)
 
-   where primaryRecipe.item = 'Iron Ore'
-    and primaryRecipe.targetName = 'Red Belt 1 side'
-    and primaryRecipe.craftingName = 'Stone Furnace'
-    and secondaryRecipe.targetName = '1 per Second'
-    and secondaryRecipe.craftingName = 'Steel furnace'
-    and tertiaryRecipe.targetName = '1 per Second'
-    and tertiaryRecipe.craftingName = 'Assembling machine 2'
-;
+REPLACE INTO craftingMachine (craftingName, craftingSpeed)
+   VALUES  ('Casting Machine MK2', '1'), 
+           ('Induction Furance MK2', '1'),
+           ('Blast Furnace MK1', '0.75'),
+           ('Pellet Press MK1', '0.75'),
+           ('Ore Processing Machine MK2', '1')
+           ;
 
 
 
+
+.header on
+
+.width 10 5 10 5 10 5 10 5 10 5 10 5 10 5
+
+select r1.item as 'r1i',  r1.numCraftingMachines as 'r1', 
+       r1.constituentItem as 'r2i', ceil(r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)  as 'r2',
+       r2.constituentItem as 'r3i', ceil((r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)*r2.constituentAPS/r3.amountPerSecond)  as 'r3',
+       r3.constituentItem  as 'r4i', ceil(((r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)*r2.constituentAPS/r3.amountPerSecond)*r3.constituentAPS/r4.amountPerSecond)  as 'r4'
+      
+            
+from (select * from recipeTarget where item in ('Tin plate') and craftingName = 'Casting Machine MK2' and targetName = 'Red Belt 1 side') r1
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Induction Furance MK2' and targetName = '1 per Second') r2 on (r1.constituentItem = r2.item)
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Blast Furnace MK1' and targetName = '1 per Second') r3 on (r2.constituentItem = r3.item)
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Ore Processing Machine MK2' and targetName = '1 per Second') r4 on (r3.constituentItem = r4.item);
+
+
+select r1.item as 'r1i',  r1.numCraftingMachines as 'r1', 
+       r1.constituentItem as 'r2i', ceil(r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)  as 'r2',
+       r2.constituentItem as 'r3i', ceil((r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)*r2.constituentAPS/r3.amountPerSecond)  as 'r3',
+       r3.constituentItem  as 'r4i', ceil(((r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)*r2.constituentAPS/r3.amountPerSecond)*r3.constituentAPS/r4.amountPerSecond)  as 'r4',
+       r4.constituentItem  as 'r5i', ceil((((r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)*r2.constituentAPS/r3.amountPerSecond)*r3.constituentAPS/r4.amountPerSecond)*r4.constituentAPS/r5.amountPerSecond)  as 'r5'
+            
+from (select * from recipeTarget where item in ('Copper plate') and craftingName = 'Casting Machine MK2' and targetName = 'Red Belt 1 side') r1
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Induction Furance MK2' and targetName = '1 per Second') r2 on (r1.constituentItem = r2.item)
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Blast Furnace MK1' and targetName = '1 per Second') r3 on (r2.constituentItem = r3.item)
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Pellet Press MK1' and targetName = '1 per Second') r4 on (r3.constituentItem = r4.item)
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Ore Processing Machine MK2' and targetName = '1 per Second') r5 on (r4.constituentItem = r5.item);
+
+/*
+
+r5.constituentItem  as 'r6i', ceil(((((r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)*r2.constituentAPS/r3.amountPerSecond)*r3.constituentAPS/r4.amountPerSecond)*r4.constituentAPS/r5.amountPerSecond)*r5.constituentAPS/r6.amountPerSecond)  as 'r6',
+       r6.constituentItem  as 'r7i', ceil((((((r1.numCraftingMachines*r1.constituentAPS/r2.amountPerSecond)*r2.constituentAPS/r3.amountPerSecond)*r3.constituentAPS/r4.amountPerSecond)*r4.constituentAPS/r5.amountPerSecond)*r5.constituentAPS/r6.amountPerSecond)*r6.constituentAPS/r7.amountPerSecond)  as 'r7'  
+
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Assembling machine 2' and targetName = '1 per Second') r6 on (r5.constituentItem = r6.item)
+LEFT OUTER JOIN (select * from recipeTarget where craftingName = 'Assembling machine 2' and targetName = '1 per Second') r7 on (r6.constituentItem = r7.item)
+*/
+
+/*
+From uranium power
+
+Gross Power up to 265 MW
+Upkeep Power of 6.6 MW => Simple fuel enrichment, ~50 MW => SImple fuel enrichment + Fuel reprocessing
+Simple enrichment only concentrates U-235 to 1.7%, but that is sufficient for crafting MOX fuel. A complete enrichment of U-235 at 4.7% is recommended for at least the first two rounds of fueling the reactor.
+Net Power production is ~215-258 MW
+
+
+*/
 
 /*
 From robot army wiki:

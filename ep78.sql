@@ -1,17 +1,17 @@
 select 'Salvite sodales and Hello Youtube!';
 
 REPLACE INTO Episode(EpisodeID, EpisodeName, Description) 
-              VALUES('67',     
-                     'More power!',
-                     'We need more power!');
+              VALUES('78',     
+                     'Silicon Processing',
+                     'Time to make some ... silicon. Woo.');
 
 
 --select episodeid from episode;
 
 /*
 Electronic Circut Critical Path:
-  Automatic building of refining buildings
-  Quartz refining
+  x Automatic building of refining buildings
+  x Quartz refining
   Silicon plate production
   Plastic bar from wood production
   Circuit boards
@@ -49,6 +49,8 @@ REPLACE INTO outputTarget(targetName,       targetAmount)
    VALUES         ('Yellow Belt 1 side',  20*1.0/3),
                   ('Red Belt 1 side',  20*1.0/3*2);
 
+REPLACE INTO craftingMachine (craftingName, electricConsumption, drain, craftingSpeed)
+   VALUES           ('Blast Furnace MK2', '135', '3.3', 1.25);
 
 
 REPLACE INTO recipe (item,              amount, craftingSpeed) 
@@ -119,23 +121,43 @@ select primaryRecipe.item
        
        * secondaryRecipe.constituentTotalItemAmountPerSecond
        * tertiaryRecipe.numCraftingMachines,1) 
+
+       || ' <- ' || quadRecipe.item || ' * ' || round(primaryRecipe.constituentTotalItemAmountPerSecond
+       * secondaryRecipe.numCraftingMachines
+       
+       * secondaryRecipe.constituentTotalItemAmountPerSecond
+       * tertiaryRecipe.numCraftingMachines
+       * tertiaryRecipe.constituentTotalItemAmountPerSecond
+       * quadRecipe.numCraftingMachines
+       ,1) 
        
        as craftSequence
   from recipeTarget as primaryRecipe
   left outer join recipeTarget as secondaryRecipe on (primaryRecipe.constituentItem = secondaryRecipe.item)
   left outer join recipeTarget as tertiaryRecipe  on (secondaryRecipe.constituentItem = tertiaryRecipe.item)
-
-   where primaryRecipe.item = 'Iron Ore'
+  left outer join recipeTarget as quadRecipe  on (tertiaryRecipe.constituentItem = quadRecipe.item)
+   where primaryRecipe.item = 'Silicon plate'
     and primaryRecipe.targetName = 'Red Belt 1 side'
     and primaryRecipe.craftingName = 'Stone Furnace'
     and secondaryRecipe.targetName = '1 per Second'
-    and secondaryRecipe.craftingName = 'Steel furnace'
+    and secondaryRecipe.craftingName = 'Stone Furnace'
     and tertiaryRecipe.targetName = '1 per Second'
     and tertiaryRecipe.craftingName = 'Assembling machine 2'
+    and quadRecipe.targetName = '1 per Second'
+    and quadRecipe.craftingName = 'Stone Furnace'
 ;
 
 
+/*
+From uranium power
 
+Gross Power up to 265 MW
+Upkeep Power of 6.6 MW => Simple fuel enrichment, ~50 MW => SImple fuel enrichment + Fuel reprocessing
+Simple enrichment only concentrates U-235 to 1.7%, but that is sufficient for crafting MOX fuel. A complete enrichment of U-235 at 4.7% is recommended for at least the first two rounds of fueling the reactor.
+Net Power production is ~215-258 MW
+
+
+*/
 
 /*
 From robot army wiki:

@@ -1,9 +1,9 @@
 select 'Salvite sodales and Hello Youtube!';
 
 REPLACE INTO Episode(EpisodeID, EpisodeName, Description) 
-              VALUES('67',     
-                     'More power!',
-                     'We need more power!');
+              VALUES('75',     
+                     'Uranium Power - Yellowcake',
+                     'With sulfuric acid out of the way, we move to the next steps of uranium enrichment.');
 
 
 --select episodeid from episode;
@@ -135,7 +135,16 @@ select primaryRecipe.item
 ;
 
 
+/*
+From uranium power
 
+Gross Power up to 265 MW
+Upkeep Power of 6.6 MW => Simple fuel enrichment, ~50 MW => SImple fuel enrichment + Fuel reprocessing
+Simple enrichment only concentrates U-235 to 1.7%, but that is sufficient for crafting MOX fuel. A complete enrichment of U-235 at 4.7% is recommended for at least the first two rounds of fueling the reactor.
+Net Power production is ~215-258 MW
+
+
+*/
 
 /*
 From robot army wiki:

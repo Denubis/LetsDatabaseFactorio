@@ -1,9 +1,9 @@
 select 'Salvite sodales and Hello Youtube!';
 
 REPLACE INTO Episode(EpisodeID, EpisodeName, Description) 
-              VALUES('67',     
-                     'More power!',
-                     'We need more power!');
+              VALUES('71',     
+                     'Hydro refining',
+                     'Lets get some hydro refining going!');
 
 
 --select episodeid from episode;
